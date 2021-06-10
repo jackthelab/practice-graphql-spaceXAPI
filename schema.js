@@ -6,8 +6,11 @@ const {
   GraphQLString,
   GraphQLBoolean,
   GraphQLList,
-  GraphQLSchema
+  GraphQLSchema,
+  GraphQLFloat
 } = require('graphql');
+
+// URL Abstractions
 
 const baseURL = "https://api.spacexdata.com/v4";
 const launchesURL = `${baseURL}/launches`;
@@ -18,12 +21,13 @@ const rocketsURL = `${baseURL}/rockets`;
 const LaunchType = new GraphQLObjectType({
   name: 'Launch',
   fields: () => ({
+    id: { type: GraphQLString },
     flight_number: { type: GraphQLInt },
-    launch_name: { type: GraphQLString },
-    launch_date_utc: { type: GraphQLString },
-    launch_date_local: { type: GraphQLString },
-    launch_success: { type: GraphQLBoolean },
-    rocketID: { type: GraphQLString }
+    name: { type: GraphQLString },
+    date_utc: { type: GraphQLString },
+    date_local: { type: GraphQLString },
+    success: { type: GraphQLBoolean },
+    rocket: { type: GraphQLString }
 
     /* 
 
@@ -42,24 +46,71 @@ const LaunchType = new GraphQLObjectType({
 
 // Rocket Type
 
-// const RocketType = new GraphQLObjectType({
-//   name: 'Rocket',
-//   fields: () => ({
-//     rocket_id: { type: GraphQLString },
-
-//   })
-// })
+const RocketType = new GraphQLObjectType({
+  name: 'Rocket',
+  fields: () => ({
+    id: { type: GraphQLString },
+    name: { type: GraphQLString },
+    type: { type: GraphQLString },
+    active: { type: GraphQLBoolean },
+    success_rate_pct: { type: GraphQLFloat },
+    description: { type: GraphQLString }
+  })
+})
 
 // Root Query
+
+/*
+Tutorial variance note:
+
+v4 is using an id instead of a flight_number for the purposes of querying individual launches
+Because of this, I've added an id on RocketType and LaunchType that did not exist in the tutorial.
+This also changes the arg type for launch and rocket in the 'fields' object below to GraphQLString instead of GraphQLInt
+
+*/
+
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
   fields: {
     launches: {
       type: new GraphQLList(LaunchType),
       resolve(parent, args) {
+
         // using axios instead of fetch
+
         return axios
           .get(launchesURL)
+          .then(res => res.data);
+
+      }
+    },
+    launch: {
+      type: LaunchType,
+      args: {
+        id: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .get(`${launchesURL}/${args.id}`)
+          .then(res => res.data);
+      }
+    },
+    rockets: {
+      type: new GraphQLList(RocketType),
+      resolve(parent, args) {
+        return axios
+          .get(rocketsURL)
+          .then(res => res.data)
+      }
+    },
+    rocket: {
+      type: RocketType,
+      args: {
+        id: { type: GraphQLString }
+      },
+      resolve(parent, args) {
+        return axios
+          .get(`${rocketsURL}/${args.id}`)
           .then(res => res.data);
       }
     }
