@@ -1,6 +1,15 @@
-const { GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLBoolean } = require('graphql');
+const axios = require('axios');
 
-const baseURL = "https://api.spacexdata.come/v4";
+const { 
+  GraphQLObjectType,
+  GraphQLInt,
+  GraphQLString,
+  GraphQLBoolean,
+  GraphQLList,
+  GraphQLSchema
+} = require('graphql');
+
+const baseURL = "https://api.spacexdata.com/v4";
 const launchesURL = `${baseURL}/launches`;
 const rocketsURL = `${baseURL}/rockets`;
 
@@ -40,3 +49,23 @@ const LaunchType = new GraphQLObjectType({
 
 //   })
 // })
+
+// Root Query
+const RootQuery = new GraphQLObjectType({
+  name: 'RootQueryType',
+  fields: {
+    launches: {
+      type: new GraphQLList(LaunchType),
+      resolve(parent, args) {
+        // using axios instead of fetch
+        return axios
+          .get(launchesURL)
+          .then(res => res.data);
+      }
+    }
+  }
+});
+
+module.exports = new GraphQLSchema({
+  query: RootQuery
+});
