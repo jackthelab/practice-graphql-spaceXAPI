@@ -27,7 +27,17 @@ const LaunchType = new GraphQLObjectType({
     date_utc: { type: GraphQLString },
     date_local: { type: GraphQLString },
     success: { type: GraphQLBoolean },
-    rocket: { type: GraphQLString }
+    // rocket: { type: GraphQLString }
+    
+    // Inserting the associated RocketType object with the UUID that the "parent" (i.e., current LaunchType object) has access to
+    rocket: {
+      type: RocketType,
+      resolve(parent, args) {
+        return axios
+          .get(`${rocketsURL}/${parent.rocket}`)
+          .then(res => res.data);
+      }
+    }
 
     /* 
 
