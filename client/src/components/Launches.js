@@ -22,7 +22,7 @@ function Launches() {
 
   return (
     <>
-      <h1>Launches</h1>
+      <h2>Launches</h2>
       { loading ? <p>Loading...</p> : null }
       { error ? <p>Error :(</p> : null }
       { data ? data.launches.map( (launch, idx) => <LaunchItem key={ idx } launch={ launch } />) : null }
