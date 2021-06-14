@@ -1,0 +1,53 @@
+body {
+  text-align: center;
+  --primary-text-color: black;
+  --success-color: green;
+  --fail-color: red;
+  --primary-accessory-color: white;
+}
+
+.logo {
+  width: 25rem;
+  display: block;
+  margin: auto;
+}
+
+.launch-card {
+  text-align: center;
+  width: 50%;
+  height: auto;
+  border-radius: 5px;
+  margin: 1rem auto;
+  font-weight: bold;
+}
+
+.launch-card:hover {
+  box-shadow: 5px 5px var(--primary-accessory-color);
+  transform: scale(1.05);
+}
+
+.successful-launch {
+  background-color: var(--success-color);
+  color: var(--primary-accessory-color);
+}
+
+.failed-launch {
+  background-color: var(--fail-color);
+  color: var(--primary-text-color);
+}
+
+.launch-details-btn {
+  margin: .5rem auto;
+  border-radius: 10px;
+  height: 2.5rem;
+  width: auto;
+  background-color: var(--primary-accessory-color);
+  color: var(--primary-text-color);
+  font-weight: bold;
+}
+
+.launch-details-btn:hover {
+  background-color: var(--primary-text-color);
+  color: var(--primary-accessory-color);
+
+}
